@@ -222,6 +222,30 @@ button:hover {
   max-height: 520px;
 }
 
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.legend-dot--air {
+  background: #0b7cff;
+}
+
+.legend-dot--ground {
+  background: #a8b0bb;
+}
+
 .range-control {
   display: grid;
   gap: 0.6rem;

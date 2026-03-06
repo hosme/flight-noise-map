@@ -186,7 +186,11 @@ const fetchAircraft = async (lat, lon) => {
     originCountry: state[2],
   }));
 
-    map.setView([lat, lon], 9);
+    if (!map._loaded) {
+      map.setView([lat, lon], 9);
+    } else {
+      map.panTo([lat, lon], { animate: true });
+    }
     updateCenterMarker(lat, lon);
     const filtered = aircraft.filter((item) => {
       if (!item.latitude || !item.longitude) return false;

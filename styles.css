@@ -114,6 +114,12 @@ input {
   font-size: 1rem;
 }
 
+.place-field {
+  position: relative;
+  display: grid;
+  gap: 0.4rem;
+}
+
 
 .suggestions {
   background: #fff;
@@ -127,7 +133,7 @@ input {
   left: 0;
   right: 0;
   top: calc(100% + 0.4rem);
-  z-index: 20;
+  z-index: 999;
   min-height: 0;
 }
 

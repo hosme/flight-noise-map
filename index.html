@@ -48,16 +48,18 @@
         <h2>Region festlegen</h2>
         <p>Position wird für die Anzeige der nächsten 30 km genutzt.</p>
         <form id="regionForm">
-          <label class="place-field">
-            Ort oder Adresse
-            <input
-              type="text"
-              id="placeSearch"
-              placeholder="z. B. Fiesch, Fireswil, Zürich"
-              autocomplete="off"
-            />
-          </label>
-          <div id="placeSuggestions" class="suggestions" hidden></div>
+          <div class="place-field">
+            <label>
+              Ort oder Adresse
+              <input
+                type="text"
+                id="placeSearch"
+                placeholder="z. B. Fiesch, Fireswil, Zürich"
+                autocomplete="off"
+              />
+            </label>
+            <div id="placeSuggestions" class="suggestions" hidden></div>
+          </div>
           <label>
             Latitude
             <input type="number" step="0.0001" id="lat" value="47.3769" />

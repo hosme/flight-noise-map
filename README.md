@@ -9,6 +9,7 @@ Web app that shows live aircraft over your region using OpenSky Network data.
 - Speed
 - Place search with suggestions
 - Noise score from 1 to 10
+- Estimated noise level in dB
 
 ## Development
 - Open `index.html` in a browser.

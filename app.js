@@ -15,6 +15,7 @@ const aircraftList = document.getElementById("aircraftList");
 const aircraftCount = document.getElementById("aircraftCount");
 const lastUpdate = document.getElementById("lastUpdate");
 const noiseScore = document.getElementById("noiseScore");
+const noiseDb = document.getElementById("noiseDb");
 const refreshButton = document.getElementById("refresh");
 
 const regionForm = document.getElementById("regionForm");
@@ -37,6 +38,7 @@ const updateStatus = (text) => {
 const updateNoiseScore = (aircraft, lat, lon) => {
   if (!aircraft.length) {
     noiseScore.textContent = "1";
+    noiseDb.textContent = "28 dB";
     return;
   }
 
@@ -53,6 +55,18 @@ const updateNoiseScore = (aircraft, lat, lon) => {
   const countBoost = Math.min(aircraft.length, 6) * 0.2;
   const finalScore = Math.min(10, Math.max(1, mappedScore + countBoost));
   noiseScore.textContent = finalScore.toFixed(1);
+
+  const baseDb = 28;
+  const proximityDb = Math.max(0, (1 - cappedDistance / 30) * 42);
+  const altitudeDb = aircraft.reduce((max, item) => {
+    if (!item.baro_altitude) return max;
+    const altitudeKm = Math.max(item.baro_altitude / 1000, 0.3);
+    const altitudeImpact = Math.max(0, (1.2 - altitudeKm) * 18);
+    return Math.max(max, altitudeImpact);
+  }, 0);
+  const densityDb = Math.min(12, aircraft.length * 1.4);
+  const estimatedDb = Math.round(baseDb + proximityDb + altitudeDb + densityDb);
+  noiseDb.textContent = `${Math.min(85, Math.max(28, estimatedDb))} dB`;
 };
 
 const renderList = (aircraft) => {

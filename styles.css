@@ -243,7 +243,7 @@ button:hover {
 }
 
 .legend-dot--ground {
-  background: #a8b0bb;
+  background: #f0a93c;
 }
 
 .range-control {
@@ -369,8 +369,8 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .aircraft-card--ground {
-  background: linear-gradient(135deg, #fff3d6, #f6d9a6);
-  color: #6a4a1a;
+  background: linear-gradient(135deg, #ffe7b0, #ffc46a);
+  color: #6b3f00;
 }
 
 .aircraft-card h4 {
@@ -406,9 +406,9 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .plane--ground {
-  background: linear-gradient(135deg, #ffd27a, #f0a93c 60%, #c9821a);
-  box-shadow: 0 8px 12px rgba(180, 120, 35, 0.45);
-  border: 1px solid rgba(140, 90, 20, 0.55);
+  background: linear-gradient(135deg, #ffcf5a, #ff9b2f 60%, #d56c00);
+  box-shadow: 0 8px 12px rgba(210, 110, 20, 0.45);
+  border: 1px solid rgba(160, 80, 10, 0.6);
 }
 
 .aircraft-meta {

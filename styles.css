@@ -188,6 +188,24 @@ button:hover {
   overflow: hidden;
   box-shadow: var(--shadow);
   min-height: 420px;
+  position: relative;
+}
+
+.map-panel__score {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 0.6rem 0.8rem;
+  box-shadow: 0 10px 20px rgba(12, 24, 40, 0.16);
+  z-index: 500;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.map-panel__score small {
+  color: var(--ink-soft);
 }
 
 #map {
@@ -332,6 +350,12 @@ button:hover {
   .list-panel {
     max-height: none;
   }
+
+  .map-panel__score {
+    top: 12px;
+    left: 12px;
+    padding: 0.5rem 0.7rem;
+  }
 }
 
 @media (max-width: 640px) {
@@ -341,5 +365,19 @@ button:hover {
 
   .hero__stats {
     grid-template-columns: 1fr;
+  }
+
+  .map-panel {
+    min-height: 360px;
+  }
+
+  #map {
+    min-height: 360px;
+  }
+
+  .map-panel__score {
+    top: 10px;
+    left: 10px;
+    border-radius: 14px;
   }
 }

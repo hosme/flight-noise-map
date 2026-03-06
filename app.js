@@ -1,6 +1,6 @@
 const map = L.map("map", {
   zoomControl: false,
-  scrollWheelZoom: false,
+  scrollWheelZoom: true,
 }).setView([47.3769, 8.5417], 9);
 
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {

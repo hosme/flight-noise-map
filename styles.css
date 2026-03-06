@@ -369,8 +369,8 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .aircraft-card--ground {
-  background: linear-gradient(135deg, #f2f2f2, #e7eaef);
-  color: #5d6670;
+  background: linear-gradient(135deg, #fff3d6, #f6d9a6);
+  color: #6a4a1a;
 }
 
 .aircraft-card h4 {
@@ -406,9 +406,9 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .plane--ground {
-  background: linear-gradient(135deg, #d3d6dc, #a8b0bb 60%, #7b8594);
-  box-shadow: 0 8px 12px rgba(80, 90, 105, 0.35);
-  border: 1px solid rgba(70, 80, 95, 0.45);
+  background: linear-gradient(135deg, #ffd27a, #f0a93c 60%, #c9821a);
+  box-shadow: 0 8px 12px rgba(180, 120, 35, 0.45);
+  border: 1px solid rgba(140, 90, 20, 0.55);
 }
 
 .aircraft-meta {

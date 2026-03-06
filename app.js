@@ -10,7 +10,6 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 
 L.control.zoom({ position: "bottomright" }).addTo(map);
 
-const statusText = document.getElementById("statusText");
 const aircraftList = document.getElementById("aircraftList");
 const aircraftCount = document.getElementById("aircraftCount");
 const lastUpdate = document.getElementById("lastUpdate");
@@ -27,7 +26,6 @@ const latInput = document.getElementById("lat");
 const lonInput = document.getElementById("lon");
 const placeSearch = document.getElementById("placeSearch");
 const placeSuggestions = document.getElementById("placeSuggestions");
-const placeLabel = document.getElementById("placeLabel");
 
 let markers = [];
 let searchController = null;
@@ -38,11 +36,6 @@ let currentRadiusKm = 18;
 
 const toKm = (meters) => (meters ? (meters / 1000).toFixed(1) : "-");
 const toKts = (ms) => (ms ? (ms * 1.94384).toFixed(0) : "-");
-
-const updateStatus = (text) => {
-  statusText.textContent = text;
-};
-
 const updateNoiseScore = (aircraft, lat, lon) => {
   noiseScore.textContent = "1.0";
   if (!aircraft.length) {
@@ -165,7 +158,7 @@ const updateCenterMarker = (lat, lon) => {
 };
 
 const fetchAircraft = async (lat, lon) => {
-  updateStatus("Lade Daten...");
+  
   const radiusDegrees = currentRadiusKm / 111;
   const lamin = lat - radiusDegrees;
   const lomin = lon - radiusDegrees;
@@ -214,9 +207,9 @@ const fetchAircraft = async (lat, lon) => {
     if (panelLastUpdate) {
       panelLastUpdate.textContent = lastUpdate.textContent;
     }
-    updateStatus("Aktualisiert");
+    
   } catch (error) {
-    updateStatus("Fehler beim Laden der Daten");
+    
   }
 };
 
@@ -334,7 +327,6 @@ const applyPlaceResult = (result) => {
   if (!result || !result.lat || !result.lon) return false;
   latInput.value = Number.parseFloat(result.lat).toFixed(4);
   lonInput.value = Number.parseFloat(result.lon).toFixed(4);
-  placeLabel.textContent = `Aktuelle Region: ${result.display_name}`;
   placeSuggestions.hidden = true;
   placeSearch.value = result.display_name;
   placeSearch.blur();

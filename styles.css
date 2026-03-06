@@ -123,8 +123,11 @@ input {
   display: grid;
   gap: 0.2rem;
   padding: 0.4rem;
-  position: relative;
-  z-index: 5;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 0.4rem);
+  z-index: 20;
   min-height: 0;
 }
 
@@ -417,4 +420,7 @@ input[type="range"]::-moz-range-thumb {
     left: 10px;
     border-radius: 14px;
   }
+}
+.place-field {
+  position: relative;
 }

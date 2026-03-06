@@ -45,6 +45,13 @@ const MIN_SPEED_MS = MIN_SPEED_KTS / 1.94384;
 
 const isGroundish = (item) =>
   (item.baro_altitude ?? 0) < MIN_ALTITUDE_M || (item.velocity ?? 0) < MIN_SPEED_MS;
+
+const setCounts = (count) => {
+  aircraftCount.textContent = count;
+  if (panelAircraftCount) {
+    panelAircraftCount.textContent = count;
+  }
+};
 const updateNoiseScore = (aircraft, lat, lon) => {
   noiseScore.textContent = "1.0";
   if (!aircraft.length) {
@@ -215,10 +222,7 @@ const fetchAircraft = async (lat, lon) => {
     const visible = showGround ? filtered : airborne;
     updateMarkers(visible);
     renderList(visible, lat, lon);
-    aircraftCount.textContent = visible.length;
-    if (panelAircraftCount) {
-      panelAircraftCount.textContent = visible.length;
-    }
+    setCounts(visible.length);
     updateNoiseScore(airborne, lat, lon);
     lastUpdate.textContent = new Date().toLocaleTimeString("de-DE", {
       hour: "2-digit",
@@ -227,9 +231,14 @@ const fetchAircraft = async (lat, lon) => {
     if (panelLastUpdate) {
       panelLastUpdate.textContent = lastUpdate.textContent;
     }
-    
   } catch (error) {
-    
+    setCounts(0);
+    lastUpdate.textContent = "--";
+    if (panelLastUpdate) {
+      panelLastUpdate.textContent = "--";
+    }
+    aircraftList.innerHTML =
+      "<p>Aktuell keine Daten vom OpenSky Netzwerk verfügbar.</p>";
   }
 };
 

@@ -257,6 +257,7 @@ const renderSuggestions = (results) => {
     const option = document.createElement("button");
     option.type = "button";
     option.textContent = result.display_name;
+    option.dataset.index = `${lastPlaceResults.indexOf(result)}`;
     option.addEventListener("click", () => {
       applyPlaceResult(result);
     });
@@ -377,7 +378,13 @@ placeSearch.addEventListener("keydown", (event) => {
 });
 
 placeSearch.addEventListener("blur", () => {
-  placeSuggestions.hidden = true;
+  setTimeout(() => {
+    placeSuggestions.hidden = true;
+  }, 150);
+});
+
+placeSuggestions.addEventListener("mousedown", (event) => {
+  event.preventDefault();
 });
 
 document.addEventListener("click", (event) => {

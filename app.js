@@ -15,7 +15,6 @@ const aircraftList = document.getElementById("aircraftList");
 const aircraftCount = document.getElementById("aircraftCount");
 const lastUpdate = document.getElementById("lastUpdate");
 const noiseScore = document.getElementById("noiseScore");
-const noiseDb = document.getElementById("noiseDb");
 const panelAircraftCount = document.getElementById("panelAircraftCount");
 const panelLastUpdate = document.getElementById("panelLastUpdate");
 const refreshButton = document.getElementById("refresh");
@@ -41,7 +40,6 @@ const updateStatus = (text) => {
 
 const updateNoiseScore = (aircraft, lat, lon) => {
   noiseScore.textContent = "1.0";
-  noiseDb.textContent = "28 dB";
   if (!aircraft.length) {
     return;
   }
@@ -73,34 +71,8 @@ const updateNoiseScore = (aircraft, lat, lon) => {
     noiseScore.classList.add("score-low");
   }
 
-  const baseDb = 24;
-  const proximityDb = Math.max(0, (1 - cappedDistance / localRadiusKm) * 28);
-  const altitudeDb = aircraft.reduce((max, item) => {
-    if (!item.baro_altitude) return max;
-    const altitudeKm = Math.max(item.baro_altitude / 1000, 0.3);
-    const altitudeImpact = Math.max(0, (0.9 - altitudeKm) * 10);
-    return Math.max(max, altitudeImpact);
-  }, 0);
-  const densityDb = Math.min(8, aircraft.length * 0.8);
-  const estimatedDb = Math.round(baseDb + proximityDb + altitudeDb + densityDb);
-  const clampedDb = Math.min(78, Math.max(24, estimatedDb));
-  noiseDb.textContent = Number.isFinite(clampedDb) ? `${clampedDb} dB` : "28 dB";
 };
 
-const estimateAircraftDb = (item, lat, lon) => {
-  if (!item.latitude || !item.longitude) return "-";
-  const distance = haversineDistance(lat, lon, item.latitude, item.longitude);
-  const localRadiusKm = 18;
-  const cappedDistance = Math.min(distance, localRadiusKm);
-  const baseDb = 24;
-  const proximityDb = Math.max(0, (1 - cappedDistance / localRadiusKm) * 28);
-  const altitudeKm = item.baro_altitude
-    ? Math.max(item.baro_altitude / 1000, 0.3)
-    : 1.2;
-  const altitudeDb = Math.max(0, (0.9 - altitudeKm) * 10);
-  const estimatedDb = Math.round(baseDb + proximityDb + altitudeDb + 4);
-  return `${Math.min(78, Math.max(24, estimatedDb))} dB`;
-};
 
 const renderList = (aircraft, lat, lon) => {
   aircraftList.innerHTML = "";
@@ -119,7 +91,6 @@ const renderList = (aircraft, lat, lon) => {
 
     const meta = document.createElement("div");
     meta.className = "aircraft-meta";
-    const estimatedDb = estimateAircraftDb(item, lat, lon);
     const distance = item.latitude && item.longitude
       ? haversineDistance(lat, lon, item.latitude, item.longitude).toFixed(1)
       : "-";
@@ -127,7 +98,6 @@ const renderList = (aircraft, lat, lon) => {
       <div>Typ: ${item.icao24 || "-"}</div>
       <div>Höhe: ${toKm(item.baro_altitude)} km</div>
       <div>Geschwindigkeit: ${toKts(item.velocity)} kt</div>
-      <div>Lautstärke: ${estimatedDb}</div>
       <div>Entfernung: ${distance} km</div>
     `;
 
@@ -162,7 +132,6 @@ const updateMarkers = (aircraft) => {
       Typ: ${item.icao24 || "-"}<br />
       Höhe: ${toKm(item.baro_altitude)} km<br />
       Geschwindigkeit: ${toKts(item.velocity)} kt<br />
-      Lautstärke: ${estimateAircraftDb(item, currentCenter.lat, currentCenter.lon)}<br />
       Entfernung: ${haversineDistance(currentCenter.lat, currentCenter.lon, item.latitude, item.longitude).toFixed(1)} km
     `);
 

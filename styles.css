@@ -256,10 +256,6 @@ button:hover {
   color: #9f1c10;
 }
 
-.score-neutral {
-  background: #eef2f7;
-  color: #2a3a4a;
-}
 
 .list-panel__header {
   display: flex;

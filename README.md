@@ -7,6 +7,8 @@ Web app that shows live aircraft over your region using OpenSky Network data.
 - Aircraft type
 - Altitude
 - Speed
+- Place search with suggestions
+- Noise score from 1 to 10
 
 ## Development
 - Open `index.html` in a browser.

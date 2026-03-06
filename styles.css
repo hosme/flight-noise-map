@@ -120,6 +120,10 @@ input {
   z-index: 5;
 }
 
+.suggestions[hidden] {
+  display: none;
+}
+
 .suggestions button {
   background: transparent;
   color: var(--ink);

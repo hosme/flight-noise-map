@@ -317,7 +317,13 @@ regionForm.addEventListener("submit", (event) => {
 refreshButton.addEventListener("click", handleRefresh);
 
 placeSearch.addEventListener("input", (event) => {
-  searchPlaces(event.target.value.trim());
+  const query = event.target.value.trim();
+  if (!query) {
+    placeSuggestions.hidden = true;
+    lastPlaceResults = [];
+    return;
+  }
+  searchPlaces(query);
 });
 
 placeSearch.addEventListener("keydown", (event) => {
@@ -327,7 +333,17 @@ placeSearch.addEventListener("keydown", (event) => {
   }
 });
 
+placeSearch.addEventListener("blur", () => {
+  placeSuggestions.hidden = true;
+});
+
 document.addEventListener("click", (event) => {
+  if (!placeSuggestions.contains(event.target) && event.target !== placeSearch) {
+    placeSuggestions.hidden = true;
+  }
+});
+
+document.addEventListener("touchstart", (event) => {
   if (!placeSuggestions.contains(event.target) && event.target !== placeSearch) {
     placeSuggestions.hidden = true;
   }

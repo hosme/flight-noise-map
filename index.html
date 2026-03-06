@@ -93,12 +93,26 @@
         <div class="list-panel__stats">
           <div>
             <span id="panelAircraftCount">--</span>
-            <small>Aktive Flugzeuge (18 km)</small>
+            <small>Aktive Flugzeuge (<span id="radiusLabel">18</span> km)</small>
           </div>
           <div>
             <span id="panelLastUpdate">--</span>
             <small>Letztes Update</small>
           </div>
+        </div>
+        <div class="range-control">
+          <div class="range-control__header">
+            <span>Umkreis</span>
+            <span id="radiusValue">18 km</span>
+          </div>
+          <input
+            type="range"
+            id="radiusInput"
+            min="5"
+            max="60"
+            step="1"
+            value="18"
+          />
         </div>
         <div id="aircraftList" class="list"></div>
       </aside>

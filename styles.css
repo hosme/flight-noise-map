@@ -223,6 +223,53 @@ button:hover {
   max-height: 520px;
 }
 
+.range-control {
+  display: grid;
+  gap: 0.6rem;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid rgba(20, 30, 40, 0.08);
+}
+
+.range-control__header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #cbe7ff, #78b7ff 70%, #2c7bff);
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #0b7cff;
+  box-shadow: 0 6px 12px rgba(11, 124, 255, 0.35);
+  border: 2px solid #fff;
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #0b7cff;
+  box-shadow: 0 6px 12px rgba(11, 124, 255, 0.35);
+  border: 2px solid #fff;
+  cursor: pointer;
+}
+
 .list-panel__stats {
   display: grid;
   grid-template-columns: 1fr;

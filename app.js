@@ -18,6 +18,9 @@ const noiseScore = document.getElementById("noiseScore");
 const panelAircraftCount = document.getElementById("panelAircraftCount");
 const panelLastUpdate = document.getElementById("panelLastUpdate");
 const refreshButton = document.getElementById("refresh");
+const radiusInput = document.getElementById("radiusInput");
+const radiusValue = document.getElementById("radiusValue");
+const radiusLabel = document.getElementById("radiusLabel");
 
 const regionForm = document.getElementById("regionForm");
 const latInput = document.getElementById("lat");
@@ -31,6 +34,7 @@ let searchController = null;
 let currentCenter = { lat: 47.3769, lon: 8.5417 };
 let lastPlaceResults = [];
 let centerMarker = null;
+let currentRadiusKm = 18;
 
 const toKm = (meters) => (meters ? (meters / 1000).toFixed(1) : "-");
 const toKts = (ms) => (ms ? (ms * 1.94384).toFixed(0) : "-");
@@ -92,14 +96,18 @@ const renderList = (aircraft, lat, lon) => {
 
     const meta = document.createElement("div");
     meta.className = "aircraft-meta";
-    const distance = item.latitude && item.longitude
-      ? haversineDistance(lat, lon, item.latitude, item.longitude).toFixed(1)
+    const distanceValue = item.latitude && item.longitude
+      ? haversineDistance(lat, lon, item.latitude, item.longitude)
+      : null;
+    const distance = Number.isFinite(distanceValue)
+      ? distanceValue.toFixed(1)
       : "-";
     meta.innerHTML = `
       <div>Typ: ${item.icao24 || "-"}</div>
       <div>Höhe: ${toKm(item.baro_altitude)} km</div>
       <div>Geschwindigkeit: ${toKts(item.velocity)} kt</div>
       <div>Entfernung: ${distance} km</div>
+      <div>Von: ${item.originCountry || "-"}</div>
     `;
 
     card.appendChild(title);
@@ -158,11 +166,11 @@ const updateCenterMarker = (lat, lon) => {
 
 const fetchAircraft = async (lat, lon) => {
   updateStatus("Lade Daten...");
-  const radius = 0.12;
-  const lamin = lat - radius;
-  const lomin = lon - radius;
-  const lamax = lat + radius;
-  const lomax = lon + radius;
+  const radiusDegrees = currentRadiusKm / 111;
+  const lamin = lat - radiusDegrees;
+  const lomin = lon - radiusDegrees;
+  const lamax = lat + radiusDegrees;
+  const lomax = lon + radiusDegrees;
 
   try {
     const response = await fetch(
@@ -182,17 +190,23 @@ const fetchAircraft = async (lat, lon) => {
     baro_altitude: state[7],
     velocity: state[9],
     heading: state[10],
+    originCountry: state[2],
   }));
 
     map.setView([lat, lon], 9);
     updateCenterMarker(lat, lon);
-    updateMarkers(aircraft);
-    renderList(aircraft, lat, lon);
-    aircraftCount.textContent = aircraft.length;
+    const filtered = aircraft.filter((item) => {
+      if (!item.latitude || !item.longitude) return false;
+      const distance = haversineDistance(lat, lon, item.latitude, item.longitude);
+      return distance <= currentRadiusKm;
+    });
+    updateMarkers(filtered);
+    renderList(filtered, lat, lon);
+    aircraftCount.textContent = filtered.length;
     if (panelAircraftCount) {
-      panelAircraftCount.textContent = aircraft.length;
+      panelAircraftCount.textContent = filtered.length;
     }
-    updateNoiseScore(aircraft, lat, lon);
+    updateNoiseScore(filtered, lat, lon);
     lastUpdate.textContent = new Date().toLocaleTimeString("de-DE", {
       hour: "2-digit",
       minute: "2-digit",
@@ -211,6 +225,16 @@ const handleRefresh = () => {
   const lon = Number.parseFloat(lonInput.value) || 8.5417;
   currentCenter = { lat, lon };
   fetchAircraft(lat, lon);
+};
+
+const updateRadiusLabels = () => {
+  const rounded = Math.round(currentRadiusKm);
+  if (radiusValue) {
+    radiusValue.textContent = `${rounded} km`;
+  }
+  if (radiusLabel) {
+    radiusLabel.textContent = `${rounded}`;
+  }
 };
 
 const haversineDistance = (lat1, lon1, lat2, lon2) => {
@@ -331,6 +355,17 @@ regionForm.addEventListener("submit", (event) => {
 
 refreshButton.addEventListener("click", handleRefresh);
 
+if (radiusInput) {
+  radiusInput.addEventListener("input", (event) => {
+    currentRadiusKm = Number.parseFloat(event.target.value) || 18;
+    updateRadiusLabels();
+  });
+
+  radiusInput.addEventListener("change", () => {
+    handleRefresh();
+  });
+}
+
 placeSearch.addEventListener("input", (event) => {
   const query = event.target.value.trim();
   if (!query) {
@@ -366,4 +401,5 @@ document.addEventListener("touchstart", (event) => {
 });
 
 handleRefresh();
+updateRadiusLabels();
 setInterval(handleRefresh, 15000);

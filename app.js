@@ -30,6 +30,7 @@ let markers = [];
 let searchController = null;
 let currentCenter = { lat: 47.3769, lon: 8.5417 };
 let lastPlaceResults = [];
+let centerMarker = null;
 
 const toKm = (meters) => (meters ? (meters / 1000).toFixed(1) : "-");
 const toKts = (ms) => (ms ? (ms * 1.94384).toFixed(0) : "-");
@@ -139,6 +140,22 @@ const updateMarkers = (aircraft) => {
   });
 };
 
+const updateCenterMarker = (lat, lon) => {
+  if (centerMarker) {
+    centerMarker.setLatLng([lat, lon]);
+    return;
+  }
+
+  centerMarker = L.circleMarker([lat, lon], {
+    radius: 7,
+    color: "#d42a1f",
+    fillColor: "#ff3b30",
+    fillOpacity: 0.9,
+    weight: 2,
+  }).addTo(map);
+  centerMarker.bindPopup("Dein Standort");
+};
+
 const fetchAircraft = async (lat, lon) => {
   updateStatus("Lade Daten...");
   const radius = 0.12;
@@ -168,6 +185,7 @@ const fetchAircraft = async (lat, lon) => {
   }));
 
     map.setView([lat, lon], 9);
+    updateCenterMarker(lat, lon);
     updateMarkers(aircraft);
     renderList(aircraft, lat, lon);
     aircraftCount.textContent = aircraft.length;

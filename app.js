@@ -28,6 +28,7 @@ const placeLabel = document.getElementById("placeLabel");
 let markers = [];
 let searchController = null;
 let currentCenter = { lat: 47.3769, lon: 8.5417 };
+let lastPlaceResults = [];
 
 const toKm = (meters) => (meters ? (meters / 1000).toFixed(1) : "-");
 const toKts = (ms) => (ms ? (ms * 1.94384).toFixed(0) : "-");
@@ -37,9 +38,9 @@ const updateStatus = (text) => {
 };
 
 const updateNoiseScore = (aircraft, lat, lon) => {
+  noiseScore.textContent = "1.0";
+  noiseDb.textContent = "28 dB";
   if (!aircraft.length) {
-    noiseScore.textContent = "1";
-    noiseDb.textContent = "28 dB";
     return;
   }
 
@@ -55,7 +56,9 @@ const updateNoiseScore = (aircraft, lat, lon) => {
   const mappedScore = Math.round(10 - (cappedDistance / 30) * 9);
   const countBoost = Math.min(aircraft.length, 6) * 0.2;
   const finalScore = Math.min(10, Math.max(1, mappedScore + countBoost));
-  noiseScore.textContent = finalScore.toFixed(1);
+  noiseScore.textContent = Number.isFinite(finalScore)
+    ? finalScore.toFixed(1)
+    : "1.0";
 
   const baseDb = 28;
   const proximityDb = Math.max(0, (1 - cappedDistance / 30) * 42);
@@ -67,7 +70,8 @@ const updateNoiseScore = (aircraft, lat, lon) => {
   }, 0);
   const densityDb = Math.min(12, aircraft.length * 1.4);
   const estimatedDb = Math.round(baseDb + proximityDb + altitudeDb + densityDb);
-  noiseDb.textContent = `${Math.min(85, Math.max(28, estimatedDb))} dB`;
+  const clampedDb = Math.min(85, Math.max(28, estimatedDb));
+  noiseDb.textContent = Number.isFinite(clampedDb) ? `${clampedDb} dB` : "28 dB";
 };
 
 const estimateAircraftDb = (item, lat, lon) => {
@@ -206,6 +210,7 @@ const haversineDistance = (lat1, lon1, lat2, lon2) => {
 };
 
 const renderSuggestions = (results) => {
+  lastPlaceResults = results;
   placeSuggestions.innerHTML = "";
   if (!results.length) {
     placeSuggestions.hidden = true;
@@ -217,12 +222,7 @@ const renderSuggestions = (results) => {
     option.type = "button";
     option.textContent = result.display_name;
     option.addEventListener("click", () => {
-      latInput.value = Number.parseFloat(result.lat).toFixed(4);
-      lonInput.value = Number.parseFloat(result.lon).toFixed(4);
-      placeLabel.textContent = `Aktuelle Region: ${result.display_name}`;
-      placeSuggestions.hidden = true;
-      placeSearch.value = result.display_name;
-      handleRefresh();
+      applyPlaceResult(result);
     });
     placeSuggestions.appendChild(option);
   });
@@ -232,6 +232,7 @@ const renderSuggestions = (results) => {
 
 const searchPlaces = async (query) => {
   if (query.length < 3) {
+    lastPlaceResults = [];
     placeSuggestions.hidden = true;
     return;
   }
@@ -242,17 +243,12 @@ const searchPlaces = async (query) => {
 
   searchController = new AbortController();
   try {
-    const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-        query
-      )}&addressdetails=1&limit=5&accept-language=de`,
-      {
-        signal: searchController.signal,
-        headers: {
-          "User-Agent": "flight-noise-map",
-        },
-      }
-    );
+    const nominatimUrl = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(
+      query
+    )}&addressdetails=1&limit=5&accept-language=de`;
+    const response = await fetch(nominatimUrl, {
+      signal: searchController.signal,
+    });
 
     if (!response.ok) {
       throw new Error("Suche fehlgeschlagen");
@@ -261,14 +257,54 @@ const searchPlaces = async (query) => {
     const results = await response.json();
     renderSuggestions(results);
   } catch (error) {
-    if (error.name !== "AbortError") {
+    if (error.name === "AbortError") {
+      return;
+    }
+
+    try {
+      const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(
+        query
+      )}&limit=5&lang=de`;
+      const response = await fetch(photonUrl, {
+        signal: searchController.signal,
+      });
+      if (!response.ok) {
+        throw new Error("Suche fehlgeschlagen");
+      }
+      const data = await response.json();
+      const results = (data.features || []).map((feature) => ({
+        display_name: feature.properties?.name
+          ? `${feature.properties.name}, ${feature.properties.country || ""}`.trim()
+          : feature.properties?.label || "",
+        lat: feature.geometry?.coordinates?.[1],
+        lon: feature.geometry?.coordinates?.[0],
+      }));
+      renderSuggestions(results.filter((item) => item.display_name));
+    } catch (fallbackError) {
       placeSuggestions.hidden = true;
+      lastPlaceResults = [];
     }
   }
 };
 
+const applyPlaceResult = (result) => {
+  if (!result || !result.lat || !result.lon) return false;
+  latInput.value = Number.parseFloat(result.lat).toFixed(4);
+  lonInput.value = Number.parseFloat(result.lon).toFixed(4);
+  placeLabel.textContent = `Aktuelle Region: ${result.display_name}`;
+  placeSuggestions.hidden = true;
+  placeSearch.value = result.display_name;
+  handleRefresh();
+  return true;
+};
+
 regionForm.addEventListener("submit", (event) => {
   event.preventDefault();
+  if (placeSearch.value.trim() && lastPlaceResults.length) {
+    if (applyPlaceResult(lastPlaceResults[0])) {
+      return;
+    }
+  }
   placeSuggestions.hidden = true;
   handleRefresh();
 });
@@ -277,6 +313,13 @@ refreshButton.addEventListener("click", handleRefresh);
 
 placeSearch.addEventListener("input", (event) => {
   searchPlaces(event.target.value.trim());
+});
+
+placeSearch.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" && lastPlaceResults.length) {
+    event.preventDefault();
+    applyPlaceResult(lastPlaceResults[0]);
+  }
 });
 
 document.addEventListener("click", (event) => {

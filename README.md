@@ -7,7 +7,7 @@ Web app that shows live aircraft over your region using OpenSky Network data.
 - Aircraft type
 - Altitude
 - Speed
-- Place search with suggestions
+- Place search with suggestions (Nominatim, Photon fallback)
 - Noise score from 1 to 10
 - Estimated noise level in dB
 - Estimated noise per aircraft card

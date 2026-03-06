@@ -23,7 +23,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 .hero {
@@ -178,7 +178,6 @@ button:hover {
   gap: 1.4rem;
   padding: 0 6vw 2.2rem;
   flex: 1;
-  min-height: 0;
   align-items: stretch;
 }
 
@@ -221,8 +220,8 @@ button:hover {
   padding: 1.5rem;
   display: grid;
   gap: 0.7rem;
-  height: 100%;
-  grid-template-rows: auto auto auto 1fr;
+  max-height: 560px;
+  grid-template-rows: auto auto 1fr;
 }
 
 .legend {
@@ -360,7 +359,6 @@ input[type="range"]::-moz-range-thumb {
   gap: 0.7rem;
   overflow-y: auto;
   padding-right: 0.5rem;
-  min-height: 0;
 }
 
 .aircraft-card {
@@ -433,7 +431,7 @@ input[type="range"]::-moz-range-thumb {
   }
 
   .list-panel {
-    height: auto;
+    max-height: none;
   }
 
   .map-panel__score {

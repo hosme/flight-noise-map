@@ -27,6 +27,7 @@ const placeLabel = document.getElementById("placeLabel");
 
 let markers = [];
 let searchController = null;
+let currentCenter = { lat: 47.3769, lon: 8.5417 };
 
 const toKm = (meters) => (meters ? (meters / 1000).toFixed(1) : "-");
 const toKts = (ms) => (ms ? (ms * 1.94384).toFixed(0) : "-");
@@ -69,7 +70,19 @@ const updateNoiseScore = (aircraft, lat, lon) => {
   noiseDb.textContent = `${Math.min(85, Math.max(28, estimatedDb))} dB`;
 };
 
-const renderList = (aircraft) => {
+const estimateAircraftDb = (item, lat, lon) => {
+  if (!item.latitude || !item.longitude) return "-";
+  const distance = haversineDistance(lat, lon, item.latitude, item.longitude);
+  const cappedDistance = Math.min(distance, 30);
+  const baseDb = 28;
+  const proximityDb = Math.max(0, (1 - cappedDistance / 30) * 42);
+  const altitudeKm = item.baro_altitude ? Math.max(item.baro_altitude / 1000, 0.3) : 1.5;
+  const altitudeDb = Math.max(0, (1.2 - altitudeKm) * 18);
+  const estimatedDb = Math.round(baseDb + proximityDb + altitudeDb + 4);
+  return `${Math.min(85, Math.max(28, estimatedDb))} dB`;
+};
+
+const renderList = (aircraft, lat, lon) => {
   aircraftList.innerHTML = "";
 
   if (!aircraft.length) {
@@ -86,10 +99,12 @@ const renderList = (aircraft) => {
 
     const meta = document.createElement("div");
     meta.className = "aircraft-meta";
+    const estimatedDb = estimateAircraftDb(item, lat, lon);
     meta.innerHTML = `
       <div>Typ: ${item.icao24 || "-"}</div>
-      <div>Hohe: ${toKm(item.baro_altitude)} km</div>
+      <div>Höhe: ${toKm(item.baro_altitude)} km</div>
       <div>Geschwindigkeit: ${toKts(item.velocity)} kt</div>
+      <div>Lautstärke: ${estimatedDb}</div>
     `;
 
     card.appendChild(title);
@@ -117,8 +132,9 @@ const updateMarkers = (aircraft) => {
     marker.bindPopup(`
       <strong>${item.callsign || "Unbekannt"}</strong><br />
       Typ: ${item.icao24 || "-"}<br />
-      Hohe: ${toKm(item.baro_altitude)} km<br />
-      Geschwindigkeit: ${toKts(item.velocity)} kt
+      Höhe: ${toKm(item.baro_altitude)} km<br />
+      Geschwindigkeit: ${toKts(item.velocity)} kt<br />
+      Lautstärke: ${estimateAircraftDb(item, currentCenter.lat, currentCenter.lon)}
     `);
 
     markers.push(marker);
@@ -154,7 +170,7 @@ const fetchAircraft = async (lat, lon) => {
 
     map.setView([lat, lon], 9);
     updateMarkers(aircraft);
-    renderList(aircraft);
+    renderList(aircraft, lat, lon);
     aircraftCount.textContent = aircraft.length;
     updateNoiseScore(aircraft, lat, lon);
     lastUpdate.textContent = new Date().toLocaleTimeString("de-DE", {
@@ -170,6 +186,7 @@ const fetchAircraft = async (lat, lon) => {
 const handleRefresh = () => {
   const lat = Number.parseFloat(latInput.value) || 47.3769;
   const lon = Number.parseFloat(lonInput.value) || 8.5417;
+  currentCenter = { lat, lon };
   fetchAircraft(lat, lon);
 };
 

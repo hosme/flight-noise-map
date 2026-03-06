@@ -30,14 +30,6 @@
             <span id="lastUpdate">--</span>
             <small>Letztes Update</small>
           </div>
-          <div>
-            <span id="noiseScore">--</span>
-            <small>Lautstärke-Score (1–10)</small>
-          </div>
-          <div>
-            <span id="noiseDb">--</span>
-            <small>Schätzung dB</small>
-          </div>
         </div>
       </div>
       <div class="hero__card">
@@ -79,6 +71,24 @@
         <div class="list-panel__header">
           <h3>Live Flugzeuge</h3>
           <button id="refresh">Jetzt aktualisieren</button>
+        </div>
+        <div class="list-panel__stats">
+          <div>
+            <span id="panelAircraftCount">--</span>
+            <small>Aktive Flugzeuge</small>
+          </div>
+          <div>
+            <span id="panelLastUpdate">--</span>
+            <small>Letztes Update</small>
+          </div>
+          <div>
+            <span id="noiseScore" class="score-pill score-low">--</span>
+            <small>Lautstärke-Score</small>
+          </div>
+          <div>
+            <span id="noiseDb" class="score-pill score-neutral">--</span>
+            <small>Schätzung dB</small>
+          </div>
         </div>
         <div id="aircraftList" class="list"></div>
       </aside>

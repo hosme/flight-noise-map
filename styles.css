@@ -61,6 +61,17 @@ h1 {
   gap: 1.5rem;
 }
 
+.hero__stats #noiseScore,
+.hero__stats #noiseDb {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  font-size: 1.2rem;
+  background: #eef2f7;
+}
+
 .hero__stats span {
   font-size: 2rem;
   font-weight: 700;
@@ -118,6 +129,7 @@ input {
   padding: 0.4rem;
   position: relative;
   z-index: 5;
+  min-height: 0;
 }
 
 .suggestions[hidden] {
@@ -193,6 +205,51 @@ button:hover {
   max-height: 620px;
 }
 
+.list-panel__stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 0.8rem;
+  background: #f7fbff;
+  border-radius: 18px;
+  padding: 0.9rem;
+  border: 1px solid rgba(20, 30, 40, 0.08);
+}
+
+.list-panel__stats span {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.score-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  font-size: 1.1rem;
+  letter-spacing: 0.01em;
+}
+
+.score-low {
+  background: #d9f7e5;
+  color: #0f6b3a;
+}
+
+.score-mid {
+  background: #fff3c9;
+  color: #8a5a00;
+}
+
+.score-high {
+  background: #ffe0dd;
+  color: #9f1c10;
+}
+
+.score-neutral {
+  background: #eef2f7;
+  color: #2a3a4a;
+}
+
 .list-panel__header {
   display: flex;
   align-items: center;
@@ -218,6 +275,33 @@ button:hover {
 
 .aircraft-card h4 {
   font-size: 1.05rem;
+}
+
+.plane-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.plane {
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, #ffb86b, #ff7a18 60%, #ff5d2a);
+  clip-path: polygon(
+    50% 0%,
+    58% 12%,
+    55% 28%,
+    80% 40%,
+    78% 52%,
+    55% 48%,
+    55% 100%,
+    45% 100%,
+    45% 48%,
+    22% 52%,
+    20% 40%,
+    45% 28%,
+    42% 12%
+  );
+  box-shadow: 0 6px 10px rgba(255, 122, 24, 0.35);
 }
 
 .aircraft-meta {

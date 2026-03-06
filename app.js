@@ -20,6 +20,7 @@ const refreshButton = document.getElementById("refresh");
 const radiusInput = document.getElementById("radiusInput");
 const radiusValue = document.getElementById("radiusValue");
 const radiusLabel = document.getElementById("radiusLabel");
+const groundToggle = document.getElementById("groundToggle");
 
 const regionForm = document.getElementById("regionForm");
 const latInput = document.getElementById("lat");
@@ -33,6 +34,7 @@ let currentCenter = { lat: 47.3769, lon: 8.5417 };
 let lastPlaceResults = [];
 let centerMarker = null;
 let currentRadiusKm = 18;
+let showGround = true;
 
 const toKm = (meters) => (meters ? (meters / 1000).toFixed(1) : "-");
 const toKts = (ms) => (ms ? (ms * 1.94384).toFixed(0) : "-");
@@ -125,7 +127,9 @@ const clearMarkers = () => {
 
 const updateMarkers = (aircraft) => {
   clearMarkers();
-  aircraft.forEach((item) => {
+  const groundAircraft = aircraft.filter((item) => isGroundish(item));
+  const airAircraft = aircraft.filter((item) => !isGroundish(item));
+  [...groundAircraft, ...airAircraft].forEach((item) => {
     if (!item.latitude || !item.longitude) return;
     const rotation = Number.isFinite(item.heading) ? item.heading : 0;
     const planeClass = isGroundish(item) ? "plane plane--ground" : "plane";
@@ -208,11 +212,12 @@ const fetchAircraft = async (lat, lon) => {
       return distance <= currentRadiusKm;
     });
     const airborne = filtered.filter((item) => !isGroundish(item));
-    updateMarkers(filtered);
-    renderList(filtered, lat, lon);
-    aircraftCount.textContent = filtered.length;
+    const visible = showGround ? filtered : airborne;
+    updateMarkers(visible);
+    renderList(visible, lat, lon);
+    aircraftCount.textContent = visible.length;
     if (panelAircraftCount) {
-      panelAircraftCount.textContent = filtered.length;
+      panelAircraftCount.textContent = visible.length;
     }
     updateNoiseScore(airborne, lat, lon);
     lastUpdate.textContent = new Date().toLocaleTimeString("de-DE", {
@@ -387,6 +392,13 @@ if (radiusInput) {
   });
 
   radiusInput.addEventListener("change", () => {
+    handleRefresh();
+  });
+}
+
+if (groundToggle) {
+  groundToggle.addEventListener("change", (event) => {
+    showGround = event.target.checked;
     handleRefresh();
   });
 }

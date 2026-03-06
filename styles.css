@@ -39,6 +39,12 @@ body {
   gap: 1.5rem;
 }
 
+.hero__controls {
+  display: grid;
+  gap: 1rem;
+  max-width: 360px;
+}
+
 .tag {
   font-size: 0.85rem;
   letter-spacing: 0.3rem;
@@ -216,7 +222,7 @@ button:hover {
   display: grid;
   gap: 0.7rem;
   height: 100%;
-  grid-template-rows: auto auto auto auto 1fr;
+  grid-template-rows: auto auto auto 1fr;
 }
 
 .legend {

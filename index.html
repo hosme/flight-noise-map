@@ -43,6 +43,27 @@
             <small>Letztes Update</small>
           </div>
         </div>
+        <div class="hero__controls">
+          <div class="range-control">
+            <div class="range-control__header">
+              <span>Umkreis</span>
+              <span id="radiusValue">18 km</span>
+            </div>
+            <input
+              type="range"
+              id="radiusInput"
+              min="5"
+              max="60"
+              step="1"
+              value="18"
+            />
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="groundToggle" checked />
+            <span class="toggle__track"></span>
+            <span>Bodenflugzeuge anzeigen</span>
+          </label>
+        </div>
       </div>
       <div class="hero__card">
         <h2>Region festlegen</h2>
@@ -102,20 +123,6 @@
           <span>Flug in der Luft</span>
           <span class="legend-dot legend-dot--ground"></span>
           <span>Bodenverkehr / steht</span>
-        </div>
-        <div class="range-control">
-          <div class="range-control__header">
-            <span>Umkreis</span>
-            <span id="radiusValue">18 km</span>
-          </div>
-          <input
-            type="range"
-            id="radiusInput"
-            min="5"
-            max="60"
-            step="1"
-            value="18"
-          />
         </div>
         <div id="aircraftList" class="list"></div>
       </aside>

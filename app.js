@@ -50,40 +50,44 @@ const updateNoiseScore = (aircraft, lat, lon) => {
     return Math.min(closest, distance);
   }, Number.POSITIVE_INFINITY);
 
+  const localRadiusKm = 13;
   const cappedDistance = Number.isFinite(nearestDistance)
-    ? Math.min(nearestDistance, 30)
-    : 30;
-  const mappedScore = Math.round(10 - (cappedDistance / 30) * 9);
-  const countBoost = Math.min(aircraft.length, 6) * 0.2;
+    ? Math.min(nearestDistance, localRadiusKm)
+    : localRadiusKm;
+  const mappedScore = Math.round(10 - (cappedDistance / localRadiusKm) * 9);
+  const countBoost = Math.min(aircraft.length, 4) * 0.15;
   const finalScore = Math.min(10, Math.max(1, mappedScore + countBoost));
   noiseScore.textContent = Number.isFinite(finalScore)
     ? finalScore.toFixed(1)
     : "1.0";
 
-  const baseDb = 28;
-  const proximityDb = Math.max(0, (1 - cappedDistance / 30) * 42);
+  const baseDb = 26;
+  const proximityDb = Math.max(0, (1 - cappedDistance / localRadiusKm) * 36);
   const altitudeDb = aircraft.reduce((max, item) => {
     if (!item.baro_altitude) return max;
     const altitudeKm = Math.max(item.baro_altitude / 1000, 0.3);
-    const altitudeImpact = Math.max(0, (1.2 - altitudeKm) * 18);
+    const altitudeImpact = Math.max(0, (1.0 - altitudeKm) * 14);
     return Math.max(max, altitudeImpact);
   }, 0);
-  const densityDb = Math.min(12, aircraft.length * 1.4);
+  const densityDb = Math.min(10, aircraft.length * 1.1);
   const estimatedDb = Math.round(baseDb + proximityDb + altitudeDb + densityDb);
-  const clampedDb = Math.min(85, Math.max(28, estimatedDb));
+  const clampedDb = Math.min(82, Math.max(26, estimatedDb));
   noiseDb.textContent = Number.isFinite(clampedDb) ? `${clampedDb} dB` : "28 dB";
 };
 
 const estimateAircraftDb = (item, lat, lon) => {
   if (!item.latitude || !item.longitude) return "-";
   const distance = haversineDistance(lat, lon, item.latitude, item.longitude);
-  const cappedDistance = Math.min(distance, 30);
-  const baseDb = 28;
-  const proximityDb = Math.max(0, (1 - cappedDistance / 30) * 42);
-  const altitudeKm = item.baro_altitude ? Math.max(item.baro_altitude / 1000, 0.3) : 1.5;
-  const altitudeDb = Math.max(0, (1.2 - altitudeKm) * 18);
+  const localRadiusKm = 13;
+  const cappedDistance = Math.min(distance, localRadiusKm);
+  const baseDb = 26;
+  const proximityDb = Math.max(0, (1 - cappedDistance / localRadiusKm) * 36);
+  const altitudeKm = item.baro_altitude
+    ? Math.max(item.baro_altitude / 1000, 0.3)
+    : 1.2;
+  const altitudeDb = Math.max(0, (1.0 - altitudeKm) * 14);
   const estimatedDb = Math.round(baseDb + proximityDb + altitudeDb + 4);
-  return `${Math.min(85, Math.max(28, estimatedDb))} dB`;
+  return `${Math.min(82, Math.max(26, estimatedDb))} dB`;
 };
 
 const renderList = (aircraft, lat, lon) => {
@@ -147,7 +151,7 @@ const updateMarkers = (aircraft) => {
 
 const fetchAircraft = async (lat, lon) => {
   updateStatus("Lade Daten...");
-  const radius = 0.27;
+  const radius = 0.12;
   const lamin = lat - radius;
   const lomin = lon - radius;
   const lamax = lat + radius;
@@ -294,6 +298,7 @@ const applyPlaceResult = (result) => {
   placeLabel.textContent = `Aktuelle Region: ${result.display_name}`;
   placeSuggestions.hidden = true;
   placeSearch.value = result.display_name;
+  placeSearch.blur();
   handleRefresh();
   return true;
 };

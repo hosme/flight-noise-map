@@ -39,6 +39,21 @@ let refreshTimer = null;
 let backoffUntil = 0;
 let backoffMs = 0;
 
+const updateRateLimitNotice = () => {
+  const remainingMs = backoffUntil - Date.now();
+  if (remainingMs <= 0) {
+    return false;
+  }
+  const remainingSec = Math.max(1, Math.ceil(remainingMs / 1000));
+  aircraftList.innerHTML =
+    `<p>Rate-Limit erreicht. Nächster Versuch in ${remainingSec}s.</p>`;
+  lastUpdate.textContent = "Warte auf API";
+  if (panelLastUpdate) {
+    panelLastUpdate.textContent = lastUpdate.textContent;
+  }
+  return true;
+};
+
 const toKm = (meters) => (meters ? (meters / 1000).toFixed(1) : "-");
 const toKts = (ms) => (ms ? (ms * 1.94384).toFixed(0) : "-");
 
@@ -246,8 +261,7 @@ const fetchAircraft = async (lat, lon) => {
     if (error.message === "RATE_LIMIT") {
       backoffMs = Math.max(backoffMs * 2 || 30000, 30000);
       backoffUntil = Date.now() + backoffMs;
-      aircraftList.innerHTML =
-        "<p>Rate-Limit erreicht. Neue Abfrage in kurzer Zeit.</p>";
+      updateRateLimitNotice();
     } else {
       aircraftList.innerHTML =
         "<p>Aktuell keine Daten vom OpenSky Netzwerk verfügbar.</p>";
@@ -257,6 +271,7 @@ const fetchAircraft = async (lat, lon) => {
 
 const handleRefresh = () => {
   if (Date.now() < backoffUntil) {
+    updateRateLimitNotice();
     return;
   }
   const lat = Number.parseFloat(latInput.value) || 47.3769;
@@ -275,6 +290,8 @@ const scheduleRefresh = (delayMs) => {
     if (now >= backoffUntil) {
       backoffMs = 0;
       handleRefresh();
+    } else {
+      updateRateLimitNotice();
     }
     scheduleRefresh(15000);
   }, delayMs);

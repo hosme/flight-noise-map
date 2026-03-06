@@ -344,6 +344,11 @@ input[type="range"]::-moz-range-thumb {
   background: linear-gradient(135deg, #ffffff, #f6fbff);
 }
 
+.aircraft-card--ground {
+  background: linear-gradient(135deg, #f2f2f2, #e7eaef);
+  color: #5d6670;
+}
+
 .aircraft-card h4 {
   font-size: 1.05rem;
 }
@@ -374,6 +379,12 @@ input[type="range"]::-moz-range-thumb {
   );
   box-shadow: 0 10px 16px rgba(11, 124, 255, 0.45);
   border: 1px solid rgba(0, 34, 90, 0.45);
+}
+
+.plane--ground {
+  background: linear-gradient(135deg, #d3d6dc, #a8b0bb 60%, #7b8594);
+  box-shadow: 0 8px 12px rgba(80, 90, 105, 0.35);
+  border: 1px solid rgba(70, 80, 95, 0.45);
 }
 
 .aircraft-meta {

@@ -36,6 +36,13 @@ let currentRadiusKm = 18;
 
 const toKm = (meters) => (meters ? (meters / 1000).toFixed(1) : "-");
 const toKts = (ms) => (ms ? (ms * 1.94384).toFixed(0) : "-");
+
+const MIN_ALTITUDE_M = 300;
+const MIN_SPEED_KTS = 5;
+const MIN_SPEED_MS = MIN_SPEED_KTS / 1.94384;
+
+const isGroundish = (item) =>
+  (item.baro_altitude ?? 0) < MIN_ALTITUDE_M || (item.velocity ?? 0) < MIN_SPEED_MS;
 const updateNoiseScore = (aircraft, lat, lon) => {
   noiseScore.textContent = "1.0";
   if (!aircraft.length) {
@@ -82,7 +89,9 @@ const renderList = (aircraft, lat, lon) => {
 
   aircraft.forEach((item) => {
     const card = document.createElement("div");
-    card.className = "aircraft-card";
+    card.className = isGroundish(item)
+      ? "aircraft-card aircraft-card--ground"
+      : "aircraft-card";
 
     const title = document.createElement("h4");
     title.textContent = item.callsign || "Unbekannter Flug";
@@ -119,9 +128,10 @@ const updateMarkers = (aircraft) => {
   aircraft.forEach((item) => {
     if (!item.latitude || !item.longitude) return;
     const rotation = Number.isFinite(item.heading) ? item.heading : 0;
+    const planeClass = isGroundish(item) ? "plane plane--ground" : "plane";
     const planeIcon = L.divIcon({
       className: "plane-icon",
-      html: `<div class="plane" style="transform: rotate(${rotation}deg)"></div>`,
+      html: `<div class="${planeClass}" style="transform: rotate(${rotation}deg)"></div>`,
       iconSize: [28, 28],
       iconAnchor: [14, 14],
     });
@@ -197,13 +207,14 @@ const fetchAircraft = async (lat, lon) => {
       const distance = haversineDistance(lat, lon, item.latitude, item.longitude);
       return distance <= currentRadiusKm;
     });
+    const airborne = filtered.filter((item) => !isGroundish(item));
     updateMarkers(filtered);
     renderList(filtered, lat, lon);
     aircraftCount.textContent = filtered.length;
     if (panelAircraftCount) {
       panelAircraftCount.textContent = filtered.length;
     }
-    updateNoiseScore(filtered, lat, lon);
+    updateNoiseScore(airborne, lat, lon);
     lastUpdate.textContent = new Date().toLocaleTimeString("de-DE", {
       hour: "2-digit",
       minute: "2-digit",

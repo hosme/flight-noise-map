@@ -207,12 +207,19 @@ button:hover {
 
 .list-panel__stats {
   display: grid;
-  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  grid-template-columns: 1fr;
   gap: 0.8rem;
   background: #f7fbff;
   border-radius: 18px;
   padding: 0.9rem;
   border: 1px solid rgba(20, 30, 40, 0.08);
+  justify-items: start;
+}
+
+.list-panel__stats > div {
+  display: grid;
+  gap: 0.3rem;
+  align-content: start;
 }
 
 .list-panel__stats span {
@@ -220,10 +227,14 @@ button:hover {
   font-weight: 700;
 }
 
+.list-panel__stats small {
+  color: var(--ink-soft);
+}
+
 .score-pill {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   padding: 0.35rem 0.65rem;
   border-radius: 999px;
   font-size: 1.1rem;
@@ -283,9 +294,9 @@ button:hover {
 }
 
 .plane {
-  width: 24px;
-  height: 24px;
-  background: linear-gradient(135deg, #ffb86b, #ff7a18 60%, #ff5d2a);
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, #2fe3ff, #0b7cff 60%, #0050c7);
   clip-path: polygon(
     50% 0%,
     58% 12%,
@@ -301,7 +312,8 @@ button:hover {
     45% 28%,
     42% 12%
   );
-  box-shadow: 0 6px 10px rgba(255, 122, 24, 0.35);
+  box-shadow: 0 10px 16px rgba(11, 124, 255, 0.45);
+  border: 1px solid rgba(0, 34, 90, 0.45);
 }
 
 .aircraft-meta {

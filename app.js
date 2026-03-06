@@ -150,8 +150,8 @@ const updateMarkers = (aircraft) => {
     const planeIcon = L.divIcon({
       className: "plane-icon",
       html: `<div class="plane" style="transform: rotate(${rotation}deg)"></div>`,
-      iconSize: [24, 24],
-      iconAnchor: [12, 12],
+      iconSize: [28, 28],
+      iconAnchor: [14, 14],
     });
     const marker = L.marker([item.latitude, item.longitude], {
       icon: planeIcon,

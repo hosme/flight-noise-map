@@ -359,6 +359,7 @@ input[type="range"]::-moz-range-thumb {
   gap: 0.7rem;
   overflow-y: auto;
   padding-right: 0.5rem;
+  min-height: 0;
 }
 
 .aircraft-card {
@@ -432,6 +433,7 @@ input[type="range"]::-moz-range-thumb {
 
   .list-panel {
     max-height: none;
+    grid-template-rows: auto auto 1fr;
   }
 
   .map-panel__score {

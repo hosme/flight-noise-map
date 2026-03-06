@@ -185,16 +185,16 @@ const fetchAircraft = async (lat, lon) => {
     }
 
     const data = await response.json();
-  const aircraft = (data.states || []).map((state) => ({
-    icao24: state[0],
-    callsign: state[1]?.trim(),
-    longitude: state[5],
-    latitude: state[6],
-    baro_altitude: state[7],
-    velocity: state[9],
-    heading: state[10],
-    originCountry: state[2],
-  }));
+    const aircraft = (data.states || []).map((state) => ({
+      icao24: state[0],
+      callsign: state[1]?.trim(),
+      longitude: state[5],
+      latitude: state[6],
+      baro_altitude: state[7],
+      velocity: state[9],
+      heading: state[10],
+      originCountry: state[2],
+    }));
 
     if (!map._loaded) {
       map.setView([lat, lon], 9);
@@ -233,6 +233,7 @@ const handleRefresh = () => {
   const lon = Number.parseFloat(lonInput.value) || 8.5417;
   currentCenter = { lat, lon };
   fetchAircraft(lat, lon);
+  updatePlaceFromCoords(lat, lon);
 };
 
 const updateRadiusLabels = () => {
@@ -242,6 +243,22 @@ const updateRadiusLabels = () => {
   }
   if (radiusLabel) {
     radiusLabel.textContent = `${rounded}`;
+  }
+};
+
+const updatePlaceFromCoords = async (lat, lon) => {
+  if (placeSearch.value.trim()) return;
+  try {
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&zoom=10&accept-language=de`
+    );
+    if (!response.ok) return;
+    const data = await response.json();
+    if (data?.display_name) {
+      placeSearch.value = data.display_name;
+    }
+  } catch (error) {
+    
   }
 };
 

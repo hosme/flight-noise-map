@@ -27,7 +27,7 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2.5rem;
-  padding: 3.5rem 6vw 2rem;
+  padding: 2.2rem 6vw 1.2rem;
 }
 
 .hero__content {
@@ -45,13 +45,13 @@ body {
 
 h1 {
   font-family: "Montserrat", "Trebuchet MS", sans-serif;
-  font-size: clamp(2.4rem, 4vw, 4rem);
+  font-size: clamp(2rem, 3.2vw, 3.2rem);
   letter-spacing: -0.03em;
 }
 
 .lead {
   max-width: 520px;
-  font-size: 1.1rem;
+  font-size: 1rem;
   line-height: 1.6;
 }
 
@@ -73,7 +73,7 @@ h1 {
 }
 
 .hero__stats span {
-  font-size: 2rem;
+  font-size: 1.7rem;
   font-weight: 700;
 }
 
@@ -85,7 +85,7 @@ h1 {
   background: var(--card);
   backdrop-filter: blur(12px);
   border-radius: var(--radius);
-  padding: 2rem;
+  padding: 1.4rem;
   box-shadow: var(--shadow);
   display: grid;
   gap: 1rem;
@@ -178,8 +178,8 @@ button:hover {
 .layout {
   display: grid;
   grid-template-columns: minmax(280px, 1fr) minmax(260px, 360px);
-  gap: 2rem;
-  padding: 0 6vw 3rem;
+  gap: 1.4rem;
+  padding: 0 6vw 2.2rem;
 }
 
 .map-panel {
@@ -187,7 +187,7 @@ button:hover {
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: var(--shadow);
-  min-height: 420px;
+  min-height: 360px;
   position: relative;
 }
 
@@ -197,7 +197,7 @@ button:hover {
   left: 16px;
   background: rgba(255, 255, 255, 0.95);
   border-radius: 16px;
-  padding: 0.6rem 0.8rem;
+  padding: 0.5rem 0.7rem;
   box-shadow: 0 10px 20px rgba(12, 24, 40, 0.16);
   z-index: 500;
   display: grid;
@@ -210,7 +210,7 @@ button:hover {
 
 #map {
   height: 100%;
-  min-height: 420px;
+  min-height: 360px;
 }
 
 .list-panel {
@@ -220,7 +220,7 @@ button:hover {
   padding: 1.5rem;
   display: grid;
   gap: 1rem;
-  max-height: 620px;
+  max-height: 520px;
 }
 
 .list-panel__stats {
@@ -241,7 +241,7 @@ button:hover {
 }
 
 .list-panel__stats span {
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   font-weight: 700;
 }
 
@@ -360,7 +360,7 @@ button:hover {
 
 @media (max-width: 640px) {
   .hero {
-    padding: 2.5rem 6vw 1.5rem;
+    padding: 1.8rem 6vw 1rem;
   }
 
   .hero__stats {
@@ -368,11 +368,11 @@ button:hover {
   }
 
   .map-panel {
-    min-height: 360px;
+    min-height: 320px;
   }
 
   #map {
-    min-height: 360px;
+    min-height: 320px;
   }
 
   .map-panel__score {

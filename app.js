@@ -35,6 +35,9 @@ let lastPlaceResults = [];
 let centerMarker = null;
 let currentRadiusKm = 18;
 let showGround = true;
+let refreshTimer = null;
+let backoffUntil = 0;
+let backoffMs = 0;
 
 const toKm = (meters) => (meters ? (meters / 1000).toFixed(1) : "-");
 const toKts = (ms) => (ms ? (ms * 1.94384).toFixed(0) : "-");
@@ -192,6 +195,9 @@ const fetchAircraft = async (lat, lon) => {
     );
 
     if (!response.ok) {
+      if (response.status === 429) {
+        throw new Error("RATE_LIMIT");
+      }
       throw new Error("API Fehler");
     }
 
@@ -237,17 +243,41 @@ const fetchAircraft = async (lat, lon) => {
     if (panelLastUpdate) {
       panelLastUpdate.textContent = "--";
     }
-    aircraftList.innerHTML =
-      "<p>Aktuell keine Daten vom OpenSky Netzwerk verfügbar.</p>";
+    if (error.message === "RATE_LIMIT") {
+      backoffMs = Math.max(backoffMs * 2 || 30000, 30000);
+      backoffUntil = Date.now() + backoffMs;
+      aircraftList.innerHTML =
+        "<p>Rate-Limit erreicht. Neue Abfrage in kurzer Zeit.</p>";
+    } else {
+      aircraftList.innerHTML =
+        "<p>Aktuell keine Daten vom OpenSky Netzwerk verfügbar.</p>";
+    }
   }
 };
 
 const handleRefresh = () => {
+  if (Date.now() < backoffUntil) {
+    return;
+  }
   const lat = Number.parseFloat(latInput.value) || 47.3769;
   const lon = Number.parseFloat(lonInput.value) || 8.5417;
   currentCenter = { lat, lon };
   fetchAircraft(lat, lon);
   updatePlaceFromCoords(lat, lon);
+};
+
+const scheduleRefresh = (delayMs) => {
+  if (refreshTimer) {
+    clearTimeout(refreshTimer);
+  }
+  refreshTimer = setTimeout(() => {
+    const now = Date.now();
+    if (now >= backoffUntil) {
+      backoffMs = 0;
+      handleRefresh();
+    }
+    scheduleRefresh(15000);
+  }, delayMs);
 };
 
 const updateRadiusLabels = () => {
@@ -454,4 +484,4 @@ document.addEventListener("touchstart", (event) => {
 
 handleRefresh();
 updateRadiusLabels();
-setInterval(handleRefresh, 15000);
+scheduleRefresh(15000);
